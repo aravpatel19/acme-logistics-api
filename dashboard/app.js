@@ -1,8 +1,6 @@
 // Dashboard configuration
-// In production, update this to your Railway API URL
-const API_BASE_URL = window.location.hostname === 'localhost' 
-    ? 'http://localhost:8000' 
-    : 'https://acme-logistics-api.up.railway.app';
+// Automatically use the same host as the dashboard is served from
+const API_BASE_URL = window.location.origin;
 const REFRESH_INTERVAL = 10000; // 10 seconds - more responsive updates
 
 // Authentication with 1-hour expiration

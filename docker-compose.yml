@@ -3,48 +3,18 @@ version: '3.8'
 services:
   api:
     build: .
-    container_name: acme-logistics-api
     ports:
       - "8000:8000"
     environment:
+      - ACME_API_KEY=${ACME_API_KEY:-acme_dev_test_key_123}
+      - FMCSA_API_KEY=${FMCSA_API_KEY}
+      - FMCSA_BASE_URL=${FMCSA_BASE_URL:-https://mobile.fmcsa.dot.gov/qc/services}
       - HOST=0.0.0.0
       - PORT=8000
-      - DEPLOY_ENV=production
-    env_file:
-      - .env
     volumes:
-      # Mount data directory for persistence
       - ./api/data:/app/api/data
-    restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/healthcheck"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 5s
-    networks:
-      - acme-network
-
-  # Optional: Add nginx for production-ready setup
-  nginx:
-    image: nginx:alpine
-    container_name: acme-nginx
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
-    depends_on:
-      - api
-    networks:
-      - acme-network
-    profiles:
-      - production
-
-networks:
-  acme-network:
-    driver: bridge
-
-# Volumes for data persistence
-volumes:
-  api-data:

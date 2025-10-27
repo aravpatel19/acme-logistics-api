@@ -1,0 +1,56 @@
+# Fly.io configuration for Acme Logistics API
+
+# Note: app name will be overridden by deploy script
+app = "acme-logistics-api"
+primary_region = "iad"
+kill_signal = "SIGINT"
+kill_timeout = "5s"
+
+[experimental]
+  auto_rollback = true
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  PORT = "8000"
+  HOST = "0.0.0.0"
+  FMCSA_BASE_URL = "https://mobile.fmcsa.dot.gov/qc/services"
+
+# The app will use secrets for sensitive values:
+# - ACME_API_KEY
+# - FMCSA_API_KEY
+
+[[services]]
+  protocol = "tcp"
+  internal_port = 8000
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ["app"]
+
+  [[services.ports]]
+    port = 80
+    handlers = ["http"]
+    
+  [[services.ports]]
+    port = 443
+    handlers = ["tls", "http"]
+    
+  [services.concurrency]
+    type = "connections"
+    hard_limit = 25
+    soft_limit = 20
+
+  [[services.http_checks]]
+    interval = "30s"
+    grace_period = "5s"
+    method = "get"
+    path = "/healthcheck"
+    protocol = "http"
+    restart_limit = 0
+    timeout = "2s"
+
+[mounts]
+  destination = "/app/api/data"
+  source = "acme_data"

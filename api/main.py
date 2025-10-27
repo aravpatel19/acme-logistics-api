@@ -44,10 +44,23 @@ async def lifespan(app: FastAPI):
     app.state.http_client = httpx.AsyncClient(timeout=15.0)
     
     # Initialize services
-    # Use correct path when running from /app directory in Docker
-    data_path = "api/data/loads.json" if os.path.exists("api/data/loads.json") else "data/loads.json"
-    app.state.loads = await LoadService.initialize(data_path)
-    app.state.metrics = MetricsService()
+    # Check if we need to initialize data from backup (for persistent volumes)
+    data_dir = "api/data" if os.path.exists("api") else "data"
+    loads_path = os.path.join(data_dir, "loads.json")
+    
+    # If loads.json doesn't exist but we have a backup, copy it
+    if not os.path.exists(loads_path):
+        init_path = os.path.join(data_dir + "_init", "loads.json")
+        if os.path.exists(init_path):
+            import shutil
+            logger.info(f"Initializing loads.json from {init_path}")
+            shutil.copy(init_path, loads_path)
+    
+    app.state.loads = await LoadService.initialize(loads_path)
+    
+    # Use the same directory for metrics
+    metrics_path = os.path.join(data_dir, "metrics.json")
+    app.state.metrics = MetricsService(metrics_path)
     
     logger.info(f"✅ Loaded {len(app.state.loads.loads)} freight loads")
     logger.info(f"✅ Metrics service initialized")

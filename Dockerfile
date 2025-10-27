@@ -36,6 +36,9 @@ COPY --from=builder /root/.local /home/acmeapi/.local
 COPY --chown=acmeapi:acmeapi api/ ./api/
 COPY --chown=acmeapi:acmeapi dashboard/ ./dashboard/
 
+# Create a backup of data files for initialization
+RUN cp -r /app/api/data /app/api/data_init || true
+
 # Switch to non-root user
 USER acmeapi
 
