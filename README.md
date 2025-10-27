@@ -160,4 +160,4 @@ See [RAILWAY_DEPLOYMENT_GUIDE.md](RAILWAY_DEPLOYMENT_GUIDE.md) for detailed inst
 
 ## License
 
-Proprietary - Acme Logistics
+Proprietary - HappyRobot
