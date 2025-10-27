@@ -496,12 +496,12 @@ class HappyRobotResponse(BaseModel):
 - **429**: Rate limit exceeded
 - **500**: Internal server error
 
-### Error Handling Strategy
-1. Validate inputs early
-2. Use Pydantic for automatic validation
-3. Catch and log all exceptions
-4. Never expose internal details
-5. Always return valid JSON
+### How we handle failures
+1. Check inputs before doing anything expensive
+2. Let Pydantic handle validation (it's good at it)
+3. Catch errors, log them, move on
+4. Don't leak internal details to callers
+5. Always respond with JSON, even when things break
 
 ---
 
@@ -521,12 +521,12 @@ class HappyRobotResponse(BaseModel):
 4. `demo_carrier_rejection_flow.py` - Rejection scenarios
 5. `check_api_docs_accuracy.py` - Documentation validation
 
-### Testing Best Practices
-- Reset data before test runs
-- Test both success and failure paths
-- Verify state changes (bookings)
-- Check metrics updates
-- Validate error responses
+### How to test properly
+- Start fresh - reset your data before each test run
+- Test the happy path AND the sad path
+- Make sure bookings actually update the state
+- Verify metrics are tracking correctly
+- Check that errors return useful messages
 
 ---
 
@@ -568,14 +568,14 @@ EXPOSE 8000
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 ```
 
-### Production Considerations
-1. Use PostgreSQL instead of JSON files
-2. Implement proper logging (CloudWatch, etc.)
-3. Add monitoring (Datadog, New Relic)
-4. Use Redis for booking state
-5. Implement proper rate limiting
-6. Add request ID tracking
-7. Use environment-specific configs
+### Before going to production
+1. Replace JSON files with a real database (PostgreSQL works great)
+2. Set up proper logging - you'll thank yourself later
+3. Add monitoring so you know when things break
+4. Use Redis for booking state - it's faster and survives restarts
+5. Implement serious rate limiting (not just the basic stuff)
+6. Add request IDs for debugging production issues
+7. Use different configs for dev/staging/prod
 
 ---
 
@@ -599,19 +599,20 @@ CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 - Handle all outcome types
 - Gracefully handle API errors
 
-### Voice Agent Prompts
-Use the `notes` field from load responses for natural language:
+### Making the AI sound natural
+The API generates human-friendly descriptions in the `notes` field:
 ```
 "AVAILABLE: Chicago, IL to Atlanta, GA | 716 miles | 
 Dry Van | $3,500 (that's $4.89 per mile) | Pickup Monday"
 ```
+Your voice agent can read this directly - it sounds like a real dispatcher.
 
 ---
 
 ## Monitoring & Analytics
 
 ### Dashboard Features
-- Real-time metrics (15s refresh)
+- Real-time metrics (10s refresh)
 - Call outcome distribution
 - Success rate tracking
 - Recent calls table
@@ -626,29 +627,29 @@ Dry Van | $3,500 (that's $4.89 per mile) | Pickup Monday"
 
 ### Performance Metrics
 - API response time < 200ms
-- Dashboard refresh every 15s
+- Dashboard refresh every 10s
 - No database = instant booking checks
 - Concurrent call handling
 - Automatic state persistence
 
 ---
 
-## Security Considerations
+## Security
 
-### Current Implementation
-- Bearer token authentication
-- Rate limiting (60 req/min)
-- CORS configured for specific origins
-- No sensitive data in responses
-- Input validation on all endpoints
+### What's already built
+- Bearer token auth on all endpoints
+- Rate limiting to prevent abuse (60 calls/minute)
+- CORS locked down to specific origins
+- Sensitive data stays out of responses
+- All inputs validated before processing
 
-### Production Enhancements Needed
-- HTTPS only (TLS 1.3)
-- API key rotation
-- Request signing
-- Audit logging
-- PCI compliance for payments
-- GDPR compliance for EU carriers
+### What you'll need for production
+- Force HTTPS everywhere (use TLS 1.3)
+- Rotate API keys regularly
+- Sign requests for extra security
+- Log everything for compliance audits
+- PCI compliance if you handle payments
+- GDPR compliance for European carriers
 
 ---
 

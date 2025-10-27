@@ -1,24 +1,24 @@
 # Acme Logistics API
 
-## Overview
+A production-ready API that automates inbound carrier sales calls for freight brokers. Built to integrate seamlessly with HappyRobot's voice AI platform, this system handles everything from carrier verification to price negotiation - turning phone calls into booked loads.
 
-Production-ready API for automating inbound carrier sales calls in the freight brokerage industry. Integrates with HappyRobot's voice AI platform to handle carrier verification, load matching, and price negotiation.
+## What it does
 
-## Features
+When carriers call in, the system automatically:
+- Verifies their credentials through the FMCSA database
+- Matches them with available freight based on location and equipment
+- Negotiates pricing within your approved limits
+- Tracks every interaction with detailed analytics
+- Transfers qualified carriers to your sales team
 
-- **Carrier Verification**: Real-time FMCSA database checks
-- **Load Matching**: Search based on location and equipment type
-- **Price Negotiation**: Automated negotiation within approved limits
-- **Call Tracking**: Complete logging with outcomes and sentiment analysis
-- **Real-time Dashboard**: Monitor calls and metrics
-- **Voice AI Integration**: Built for HappyRobot platform
+The result? Your sales team only talks to verified, interested carriers who've already agreed on pricing.
 
-## Tech Stack
+## Built with
 
-- **Backend**: FastAPI (Python 3.11)
-- **Dashboard**: HTML/JavaScript with Chart.js
-- **External APIs**: FMCSA, HappyRobot
-- **Deployment**: Docker + Railway (automatic HTTPS)
+- **Backend**: FastAPI (Python 3.11) - Fast, modern, and built for APIs
+- **Dashboard**: Vanilla JavaScript with Chart.js - No framework bloat
+- **External APIs**: FMCSA for carrier verification, HappyRobot for voice AI
+- **Deployment**: Docker + Railway with automatic HTTPS
 
 ## Quick Start
 
@@ -31,7 +31,7 @@ Production-ready API for automating inbound carrier sales calls in the freight b
 
 ```bash
 # Clone and setup
-git clone https://github.com/YOUR_USERNAME/acme-logistics-api.git
+git clone https://github.com/aravpatel19/acme-logistics-api.git
 cd acme-logistics-api
 
 # Create virtual environment
@@ -44,6 +44,8 @@ pip install -r api/requirements.txt
 # Configure environment
 cp .env.example .env
 # Edit .env with your API keys
+
+# Note: metrics.json will be created automatically on first run
 ```
 
 ### Running Locally
@@ -137,7 +139,7 @@ acme-logistics-api/
 - [API Documentation](API_DOCUMENTATION.md) - Complete API reference
 - [HappyRobot Integration](HAPPYROBOT_API_ENDPOINTS.md) - Voice AI setup
 - [Deployment Guide](RAILWAY_DEPLOYMENT_GUIDE.md) - Production deployment
-- [Development Guide](CLAUDE.md) - Contributing guidelines
+- [API Key Management](API_KEY_MANAGEMENT.md) - Managing multiple API keys
 
 ## Security
 

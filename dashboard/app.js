@@ -1,7 +1,48 @@
 // Dashboard configuration
-const API_BASE_URL = 'http://localhost:8000';
-const API_KEY = 'acme_dev_test_key_123';
-const REFRESH_INTERVAL = 15000; // 15 seconds - less glitchy
+// In production, update this to your Railway API URL
+const API_BASE_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:8000' 
+    : 'https://acme-logistics-api.up.railway.app';
+const REFRESH_INTERVAL = 10000; // 10 seconds - more responsive updates
+
+// Authentication with 1-hour expiration
+function checkApiKeyExpiration() {
+    const stored = localStorage.getItem('acme_api_key_data');
+    if (!stored) return null;
+    
+    try {
+        const data = JSON.parse(stored);
+        const now = Date.now();
+        const oneHour = 60 * 60 * 1000; // 1 hour in milliseconds
+        
+        if (now - data.timestamp > oneHour) {
+            // Expired - clear it
+            localStorage.removeItem('acme_api_key_data');
+            return null;
+        }
+        
+        return data.key;
+    } catch (e) {
+        // Invalid data - clear it
+        localStorage.removeItem('acme_api_key_data');
+        return null;
+    }
+}
+
+let API_KEY = checkApiKeyExpiration();
+if (!API_KEY) {
+    API_KEY = prompt('Please enter your API key to access the dashboard:');
+    if (API_KEY) {
+        // Store with timestamp
+        localStorage.setItem('acme_api_key_data', JSON.stringify({
+            key: API_KEY,
+            timestamp: Date.now()
+        }));
+    } else {
+        document.body.innerHTML = '<div class="flex items-center justify-center h-screen"><h1 class="text-2xl text-red-600">Access Denied: Valid API key required</h1></div>';
+        throw new Error('No API key provided');
+    }
+}
 
 // State management
 let allLoads = [];
@@ -157,6 +198,9 @@ async function fetchLoads() {
         });
         
         if (!response.ok) {
+            if (response.status === 403) {
+                handleAuthError();
+            }
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         
@@ -411,6 +455,8 @@ function updateLoadDetails() {
 // Update calls table
 function updateCallsTable() {
     const tbody = document.getElementById('callsTableBody');
+    const callCountElement = document.getElementById('callCount');
+    
     if (!tbody || !metrics || !metrics.recent_calls) {
         if (tbody) {
             tbody.innerHTML = `
@@ -421,10 +467,18 @@ function updateCallsTable() {
                 </tr>
             `;
         }
+        if (callCountElement) {
+            callCountElement.textContent = '0 calls';
+        }
         return;
     }
     
     const calls = metrics.recent_calls;
+    
+    // Update call count
+    if (callCountElement) {
+        callCountElement.textContent = `${calls.length} call${calls.length !== 1 ? 's' : ''}`;
+    }
     
     tbody.innerHTML = calls.map(call => {
         const timestamp = new Date(call.timestamp);
@@ -567,6 +621,51 @@ function updateSentimentChart(sentiments) {
             }
         }
     });
+}
+
+// Authentication Functions
+function handleAuthError() {
+    localStorage.removeItem('acme_api_key_data');
+    alert('Invalid or expired API key. Please log in again.');
+    location.reload();
+}
+
+function logout() {
+    if (confirm('Are you sure you want to logout?')) {
+        localStorage.removeItem('acme_api_key_data');
+        location.reload();
+    }
+}
+
+// Reset Functions
+async function resetMetrics() {
+    if (!confirm('This will clear all call history and booking data. Are you sure?')) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/metrics/reset`, {
+            method: 'POST',
+            headers: { 
+                'Authorization': `Bearer ${API_KEY}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        alert(result.message);
+        
+        // Refresh the dashboard
+        await updateDashboard();
+        
+    } catch (error) {
+        console.error('Error resetting metrics:', error);
+        alert('Failed to reset metrics. Check console for details.');
+    }
 }
 
 // Start when DOM is ready

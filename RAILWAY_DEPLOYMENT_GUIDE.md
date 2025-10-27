@@ -1,23 +1,29 @@
-# Railway Deployment Guide with Terraform
+# Railway Deployment Guide
 
-## Overview
+Ready to take your API live? Railway makes it easy. You'll get automatic HTTPS, scaling, and monitoring without the usual headaches.
 
-This guide explains how to deploy the Acme Logistics API to Railway using Terraform. Railway automatically provides:
-- **HTTPS with Let's Encrypt certificates** (no configuration needed!)
-- Auto-scaling
-- Built-in logging and monitoring
-- Automatic deployments from GitHub
+## Why Railway?
 
-## How HTTPS Works on Railway
+Railway handles all the infrastructure nonsense:
+- **Automatic HTTPS** - SSL certificates just work (via Let's Encrypt)
+- **Auto-scaling** - Handles traffic spikes automatically
+- **Built-in monitoring** - See what's happening in real-time
+- **GitHub integration** - Push to deploy
 
-**You don't need to do anything!** Railway automatically:
-1. Provisions a Let's Encrypt SSL certificate for your subdomain
-2. Handles certificate renewal (every 90 days)
-3. Forces HTTPS redirect for all traffic
-4. Provides secure WebSocket connections
+## How HTTPS works (spoiler: it's automatic)
 
-Your API will be accessible at:
-- `https://acme-logistics-api.up.railway.app` (with automatic HTTPS)
+You literally don't have to do anything. Railway automatically:
+1. Gets you an SSL certificate from Let's Encrypt
+2. Renews it before it expires
+3. Forces all traffic through HTTPS
+4. Handles WebSocket upgrades securely
+
+Your API will be live at:
+- `https://acme-logistics-api.up.railway.app` (HTTPS included)
+
+## Data persistence
+
+By default, Railway wipes your filesystem on each deployment. But don't worry - our Terraform config includes a persistent volume that keeps your metrics.json safe between deployments. Your call history won't disappear!
 
 ## Prerequisites
 
@@ -181,6 +187,32 @@ terraform apply
 ✅ **Environment Variables** - Sensitive data stored securely in Railway
 ✅ **Private Project** - Your code and logs are private by default
 ✅ **Non-root Container** - Dockerfile uses non-root user for security
+
+## Production considerations
+
+### Upgrading from JSON to PostgreSQL
+When you're ready for real production:
+
+1. **Add PostgreSQL to your Railway project**:
+   ```bash
+   # In terraform/main.tf, add:
+   resource "railway_service" "postgres" {
+     name       = "postgres"
+     project_id = railway_project.acme_logistics.id
+     source_image = "postgres:15"
+   }
+   ```
+
+2. **Update your code** to use SQLAlchemy instead of JSON files
+3. **Migrate existing data** from metrics.json to PostgreSQL
+
+### Why upgrade?
+- **Better performance** at scale
+- **Concurrent writes** without conflicts
+- **SQL queries** for analytics
+- **Automatic backups** from Railway
+
+For now, the persistent volume works great for demos and small deployments!
 
 ## Troubleshooting
 

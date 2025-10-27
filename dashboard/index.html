@@ -69,6 +69,24 @@
                     <i class="fas fa-chart-line text-xl"></i>
                 </button>
             </nav>
+            
+            <!-- Admin Actions at Bottom -->
+            <div class="mt-auto mb-4 space-y-2">
+                <!-- Reset Data Button -->
+                <button class="w-full text-gray-400 hover:text-yellow-500 transition-colors p-2 rounded border border-gray-700 hover:border-yellow-500" 
+                        onclick="resetMetrics()" 
+                        title="Reset All Data">
+                    <i class="fas fa-trash-restore text-xl"></i>
+                    <span class="block text-xs mt-1">Reset Demo</span>
+                </button>
+                
+                <!-- Logout Button -->
+                <button class="w-full text-gray-400 hover:text-red-500 transition-colors p-2 rounded" 
+                        onclick="logout()" 
+                        title="Logout">
+                    <i class="fas fa-sign-out-alt text-xl"></i>
+                </button>
+            </div>
         </div>
 
         <!-- Main Content Area -->
@@ -156,13 +174,16 @@
 
             <!-- Recent Calls View -->
             <div id="callsView" class="view hidden flex-1">
-                <div class="flex-1 bg-gray-900">
-                    <div class="p-6">
+                <div class="flex-1 bg-gray-900 overflow-hidden flex flex-col">
+                    <div class="p-6 pb-0">
                         <h1 class="text-2xl font-bold mb-6 flex items-center">
                             <i class="fas fa-phone mr-3"></i>All Recent Calls
+                            <span class="ml-auto text-sm text-gray-400" id="callCount">0 calls</span>
                         </h1>
-                        
-                        <!-- Calls Table -->
+                    </div>
+                    
+                    <!-- Scrollable Calls Table -->
+                    <div class="flex-1 px-6 pb-6 overflow-y-auto">
                         <div class="bg-gray-800 rounded-lg overflow-hidden">
                             <table class="min-w-full divide-y divide-gray-700">
                                 <thead class="bg-gray-700">

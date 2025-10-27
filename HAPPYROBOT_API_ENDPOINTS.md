@@ -1,9 +1,10 @@
-# HappyRobot API Endpoints Configuration
+# HappyRobot API Configuration
 
-## Current API Details
-- **Base URL**: `https://nonpecuniary-scoldable-latesha.ngrok-free.dev`
-- **API Key**: `acme_dev_test_key_123`
-- **Status**: ✅ Live (via ngrok)
+This guide helps you set up the API endpoints in HappyRobot's voice agent. You'll need to create tools for each endpoint.
+
+## Your API Details (update these)
+- **Base URL**: `https://your-api-url.com` (replace with your ngrok or Railway URL)
+- **API Key**: `acme_dev_test_key_123` (use your actual key in production)
 
 ---
 

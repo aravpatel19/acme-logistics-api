@@ -619,6 +619,28 @@ async def get_metrics(api_key: str = Depends(verify_api_key)):
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@app.post("/metrics/reset")
+async def reset_metrics(api_key: str = Depends(verify_api_key)):
+    """Reset all metrics data (useful for demos)"""
+    try:
+        # Clear the metrics
+        app.state.metrics.calls = []
+        await app.state.metrics.save()
+        
+        # Also clear booked loads tracking
+        app.state.loads.booked_loads.clear()
+        
+        logger.info("🧹 Metrics and booking data reset")
+        
+        return {
+            "status": "success",
+            "message": "All metrics and booking data have been reset"
+        }
+    except Exception as e:
+        logger.error(f"Failed to reset metrics: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 # Removed unnecessary endpoints:
 # - /loads (debug endpoint not needed)
 # - /loads/{load_id} (not used by HappyRobot)  

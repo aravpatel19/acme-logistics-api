@@ -115,8 +115,8 @@ class MetricsService:
             sentiment = call.get("sentiment", "neutral")
             sentiments[sentiment] = sentiments.get(sentiment, 0) + 1
         
-        # Recent calls (last 10)
-        recent = sorted(self.calls, key=lambda x: x["timestamp"], reverse=True)[:10]
+        # All calls sorted by most recent
+        recent = sorted(self.calls, key=lambda x: x["timestamp"], reverse=True)
         
         return {
             "total_calls": total_calls,

@@ -30,10 +30,19 @@ resource "railway_service" "api" {
   project_id = railway_project.acme_logistics.id
   
   # Railway will automatically detect and use our Dockerfile
-  source_repo        = "https://github.com/YOUR_USERNAME/acme-logistics-automation"
+  source_repo        = "https://github.com/aravpatel19/acme-logistics-api"
   source_repo_branch = "main"
   
   # If you're not using GitHub, you can deploy from local with Railway CLI instead
+}
+
+# Create persistent volume for metrics data
+resource "railway_volume" "metrics_storage" {
+  name       = "metrics-data"
+  project_id = railway_project.acme_logistics.id
+  service_id = railway_service.api.id
+  mount_path = "/app/api/data"
+  size_gb    = 1  # 1GB is plenty for JSON metrics
 }
 
 # Create the dashboard service (optional)
@@ -41,7 +50,7 @@ resource "railway_service" "dashboard" {
   name       = "dashboard"
   project_id = railway_project.acme_logistics.id
   
-  source_repo        = "https://github.com/YOUR_USERNAME/acme-logistics-automation"
+  source_repo        = "https://github.com/aravpatel19/acme-logistics-api"
   source_repo_branch = "main"
   root_directory     = "dashboard"  # Dashboard is in a subdirectory
 }
