@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acme Logistics - Operations Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .load-card {
+            transition: all 0.2s ease;
+        }
+        .load-card:hover {
+            transform: translateX(4px);
+        }
+        .load-card.selected {
+            border-color: #3b82f6;
+            background-color: #1e293b;
+        }
+        .tab-active {
+            border-bottom: 2px solid #3b82f6;
+            color: #3b82f6;
+        }
+        .nav-active {
+            background-color: #1e293b;
+            color: #3b82f6;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 font-sans">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Left Sidebar -->
+        <div class="w-16 bg-black flex flex-col items-center py-4 space-y-8">
+            <div class="text-2xl">
+                <i class="fas fa-truck text-blue-500"></i>
+            </div>
+            <nav class="flex flex-col space-y-6">
+                <button class="nav-btn text-gray-400 hover:text-white transition-colors p-2 rounded nav-active" 
+                        onclick="switchView('loads')" 
+                        data-view="loads" 
+                        title="Loads">
+                    <i class="fas fa-boxes text-xl"></i>
+                </button>
+                <button class="nav-btn text-gray-400 hover:text-white transition-colors p-2 rounded" 
+                        onclick="switchView('calls')" 
+                        data-view="calls" 
+                        title="Recent Calls">
+                    <i class="fas fa-phone text-xl"></i>
+                </button>
+                <button class="nav-btn text-gray-400 hover:text-white transition-colors p-2 rounded" 
+                        onclick="switchView('analytics')" 
+                        data-view="analytics" 
+                        title="Analytics">
+                    <i class="fas fa-chart-line text-xl"></i>
+                </button>
+            </nav>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 flex">
+            <!-- Loads View -->
+            <div id="loadsView" class="view flex flex-1">
+                <!-- Left Panel - Loads List -->
+                <div class="w-96 bg-gray-800 border-r border-gray-700 flex flex-col">
+                    <!-- Header with Tabs -->
+                    <div class="p-4 border-b border-gray-700">
+                        <div class="flex items-center justify-between mb-4">
+                            <h1 class="text-xl font-bold flex items-center">
+                                <i class="fas fa-boxes mr-2"></i> Loads
+                            </h1>
+                            <span class="text-sm text-gray-400" id="loadCount">0 total</span>
+                        </div>
+                        
+                        <!-- Tabs -->
+                        <div class="flex space-x-6 text-sm">
+                            <button class="pb-2 tab-active transition-all" onclick="switchTab('available')">
+                                Available
+                            </button>
+                            <button class="pb-2 text-gray-400 hover:text-white transition-all" onclick="switchTab('booked')">
+                                Booked
+                            </button>
+                            <button class="pb-2 text-gray-400 hover:text-white transition-all" onclick="switchTab('all')">
+                                All
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Search Bar -->
+                    <div class="p-4 border-b border-gray-700">
+                        <div class="relative">
+                            <input type="text" 
+                                   id="loadSearch"
+                                   placeholder="Search by city, route, or load ID..." 
+                                   class="w-full bg-gray-700 text-white px-4 py-2 pr-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <i class="fas fa-search absolute right-3 top-3 text-gray-400"></i>
+                        </div>
+                        
+                        <!-- Quick Filters -->
+                        <div class="flex gap-2 mt-3 flex-wrap">
+                            <button class="px-3 py-1 bg-blue-600 rounded text-xs hover:bg-blue-700 transition-colors" 
+                                    onclick="filterByEquipment('')">
+                                All Equipment
+                            </button>
+                            <button class="px-3 py-1 bg-gray-700 rounded text-xs hover:bg-gray-600 transition-colors" 
+                                    onclick="filterByEquipment('Dry Van')">
+                                Dry Van
+                            </button>
+                            <button class="px-3 py-1 bg-gray-700 rounded text-xs hover:bg-gray-600 transition-colors" 
+                                    onclick="filterByEquipment('Flatbed')">
+                                Flatbed
+                            </button>
+                            <button class="px-3 py-1 bg-gray-700 rounded text-xs hover:bg-gray-600 transition-colors" 
+                                    onclick="filterByEquipment('Reefer')">
+                                Reefer
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Loads List -->
+                    <div class="flex-1 overflow-y-auto p-4 space-y-3" id="loadsList">
+                        <div class="text-center text-gray-500 py-8">
+                            <i class="fas fa-spinner fa-spin text-4xl mb-2"></i>
+                            <p>Loading loads...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Center Panel - Load Details -->
+                <div class="flex-1 bg-gray-900 flex flex-col">
+                    <div id="loadDetailsPanel" class="flex-1 p-6 overflow-y-auto">
+                        <!-- Default state when no load selected -->
+                        <div class="h-full flex items-center justify-center text-gray-500">
+                            <div class="text-center">
+                                <i class="fas fa-boxes text-6xl mb-4 opacity-20"></i>
+                                <p class="text-lg">Select a load to view details</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Calls View -->
+            <div id="callsView" class="view hidden flex-1">
+                <div class="flex-1 bg-gray-900">
+                    <div class="p-6">
+                        <h1 class="text-2xl font-bold mb-6 flex items-center">
+                            <i class="fas fa-phone mr-3"></i>All Recent Calls
+                        </h1>
+                        
+                        <!-- Calls Table -->
+                        <div class="bg-gray-800 rounded-lg overflow-hidden">
+                            <table class="min-w-full divide-y divide-gray-700">
+                                <thead class="bg-gray-700">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Time</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Carrier</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Load ID</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Route</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Outcome</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Agreed Rate</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Sentiment</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-gray-800 divide-y divide-gray-700" id="callsTableBody">
+                                    <tr>
+                                        <td colspan="7" class="px-6 py-4 text-center text-gray-500">
+                                            <i class="fas fa-spinner fa-spin mr-2"></i>Loading calls...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics View -->
+            <div id="analyticsView" class="view hidden flex-1">
+                <div class="flex-1 bg-gray-900 p-6 overflow-y-auto">
+                    <h1 class="text-2xl font-bold mb-6 flex items-center">
+                        <i class="fas fa-chart-line mr-3"></i>Analytics Dashboard
+                    </h1>
+                    
+                    <!-- KPI Cards -->
+                    <div class="grid grid-cols-4 gap-4 mb-6">
+                        <div class="bg-gray-800 rounded-lg p-4">
+                            <p class="text-sm text-gray-400">Total Calls</p>
+                            <p class="text-2xl font-bold" id="totalCalls">-</p>
+                        </div>
+                        <div class="bg-gray-800 rounded-lg p-4">
+                            <p class="text-sm text-gray-400">Success Rate</p>
+                            <p class="text-2xl font-bold text-green-500" id="successRate">-%</p>
+                        </div>
+                        <div class="bg-gray-800 rounded-lg p-4">
+                            <p class="text-sm text-gray-400">Booked Value</p>
+                            <p class="text-2xl font-bold" id="totalBookedValue">$-</p>
+                        </div>
+                        <div class="bg-gray-800 rounded-lg p-4">
+                            <p class="text-sm text-gray-400">Avg Negotiation</p>
+                            <p class="text-2xl font-bold" id="avgNegotiation">- rounds</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Charts -->
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="bg-gray-800 rounded-lg p-6">
+                            <h3 class="text-lg font-semibold mb-4">Call Outcomes</h3>
+                            <div class="h-64 relative">
+                                <canvas id="outcomesChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="bg-gray-800 rounded-lg p-6">
+                            <h3 class="text-lg font-semibold mb-4">Carrier Sentiment</h3>
+                            <div class="h-64 relative">
+                                <canvas id="sentimentChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
