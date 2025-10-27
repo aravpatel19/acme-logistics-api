@@ -2,7 +2,7 @@
 
 This API implements the required security features:
 
-## 1. HTTPS with Let's Encrypt ✅
+## 1. HTTPS with Let's Encrypt
 
 ### Local Development
 - Uses HTTP (localhost:8000)
@@ -33,7 +33,7 @@ The fly.toml configuration ensures this:
   handlers = ["tls", "http"]  # TLS = Let's Encrypt
 ```
 
-## 2. API Key Authentication ✅
+## 2. API Key Authentication
 
 ### Implementation
 All API endpoints (except /healthcheck) require Bearer token authentication:
@@ -106,12 +106,12 @@ Sensitive data stored as environment variables:
 
 | Requirement | Status | Implementation |
 |------------|--------|----------------|
-| HTTPS | ✅ | Let's Encrypt via Fly.io |
-| API Key Auth | ✅ | Bearer token on all endpoints |
-| Rate Limiting | ✅ | 60 req/min per IP |
-| CORS | ✅ | Configurable origins |
-| Non-root Docker | ✅ | Custom user `acmeapi` |
-| Secrets Management | ✅ | Environment variables |
+| HTTPS | Yes | Let's Encrypt via Fly.io |
+| API Key Auth | Yes | Bearer token on all endpoints |
+| Rate Limiting | Yes | 60 req/min per IP |
+| CORS | Yes | Configurable origins |
+| Non-root Docker | Yes | Custom user `acmeapi` |
+| Secrets Management | Yes | Environment variables |
 
 ## Testing Security
 

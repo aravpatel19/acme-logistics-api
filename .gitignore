@@ -57,4 +57,4 @@ node_modules/
 
 # Python virtual environments
 venv/
-virtualenv/
+virtualenv/.claude/

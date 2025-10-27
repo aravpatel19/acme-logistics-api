@@ -2,7 +2,7 @@
 
 Automated inbound carrier sales system for freight brokers, integrated with HappyRobot voice AI.
 
-## 🚀 Live Demo
+## Live Demo
 
 - **API**: https://acme-logistics-api-3534.fly.dev
 - **Dashboard**: https://acme-logistics-api-3534.fly.dev/dashboard
@@ -10,7 +10,7 @@ Automated inbound carrier sales system for freight brokers, integrated with Happ
 
 **Demo Credentials**: `acme_dev_test_key_123`
 
-## 🎯 What It Does
+## What It Does
 
 1. **Verifies** carriers through FMCSA database
 2. **Matches** them with available loads
@@ -18,14 +18,14 @@ Automated inbound carrier sales system for freight brokers, integrated with Happ
 4. **Tracks** all interactions
 5. **Transfers** qualified carriers to sales
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Backend**: FastAPI (Python 3.11)
 - **Dashboard**: Vanilla JavaScript with Chart.js
 - **Deployment**: Docker + Fly.io
 - **Voice AI**: HappyRobot platform
 
-## 📦 Quick Start
+## Quick Start
 
 ### Local Development
 
@@ -63,7 +63,7 @@ docker run -p 8000:8000 -e ACME_API_KEY="your_key" acme-api
 ./deploy-to-flyio.sh
 ```
 
-## 📊 Features
+## Features
 
 ### API Endpoints
 - `GET /api/v1/carriers/find` - FMCSA verification
@@ -83,7 +83,7 @@ docker run -p 8000:8000 -e ACME_API_KEY="your_key" acme-api
 - Rate limiting
 - Docker security best practices
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 ├── api/                # FastAPI backend
@@ -97,18 +97,18 @@ docker run -p 8000:8000 -e ACME_API_KEY="your_key" acme-api
 └── fly.toml         # Deployment config
 ```
 
-## 🤝 HappyRobot Integration
+## HappyRobot Integration
 
 See [HAPPYROBOT_API_ENDPOINTS.md](./HAPPYROBOT_API_ENDPOINTS.md) for voice agent configuration.
 
-## 📈 Performance
+## Performance
 
 - **Success Rate**: 37% booking conversion
 - **Response Time**: <200ms API latency
 - **Availability**: 99.9% uptime
 - **Capacity**: 1000+ calls/day
 
-## 🧪 Testing
+## Testing
 
 ```bash
 # Run tests
@@ -118,13 +118,13 @@ python tests/final_integration_test.py
 python tests/populate_metrics.py
 ```
 
-## 📝 Documentation
+## Documentation
 
 - [Solution Overview](./ACME_LOGISTICS_SOLUTION.md) - Business presentation
 - [API Documentation](./API_DOCUMENTATION.md) - Technical details
 - [Deployment Guide](./DEPLOYMENT_GUIDE.md) - Infrastructure setup
 - [Security Details](./SECURITY.md) - Security implementation
 
-## 📄 License
+## License
 
 MIT License - See LICENSE file

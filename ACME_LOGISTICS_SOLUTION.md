@@ -4,7 +4,7 @@
 
 This document presents our automated inbound carrier sales solution for Acme Logistics, built on the HappyRobot platform. The system handles carrier calls automatically - from verification through negotiation - allowing your sales team to focus only on qualified, price-agreed carriers.
 
-## 🎯 Solution Overview
+## Solution Overview
 
 ### What It Does
 When carriers call looking for loads:
@@ -15,13 +15,13 @@ When carriers call looking for loads:
 5. **Transfers** qualified carriers to sales
 
 ### Key Benefits
-- ✅ 24/7 automated carrier qualification
-- ✅ Reduces sales team workload by 70%
-- ✅ Ensures compliance with FMCSA requirements
-- ✅ Real-time metrics and analytics
-- ✅ Prevents double-booking of loads
+- 24/7 automated carrier qualification
+- Reduces sales team workload by 70%
+- Ensures compliance with FMCSA requirements
+- Real-time metrics and analytics
+- Prevents double-booking of loads
 
-## 🔧 Technical Architecture
+## Technical Architecture
 
 ### Components
 1. **API Backend** (FastAPI/Python)
@@ -48,7 +48,7 @@ When carriers call looking for loads:
 - Rate limiting (60 requests/minute)
 - Non-root Docker container
 
-## 📊 Metrics & Analytics
+## Metrics & Analytics
 
 The dashboard tracks:
 - **Call Volume**: Total calls and trends
@@ -57,7 +57,7 @@ The dashboard tracks:
 - **Negotiation Patterns**: Average rounds to close
 - **Revenue Impact**: Total booked value
 
-## 🚀 Deployment
+## Deployment
 
 ### Live Production System
 - **API URL**: https://acme-logistics-api-3534.fly.dev
@@ -70,7 +70,7 @@ The dashboard tracks:
 - Persistent data storage
 - 99.9% uptime SLA
 
-## 💰 ROI Analysis
+## ROI Analysis
 
 Based on typical freight broker operations:
 - **Time Saved**: 5 minutes per unqualified call
@@ -78,7 +78,7 @@ Based on typical freight broker operations:
 - **Cost Reduction**: $50,000/year in labor costs
 - **Revenue Increase**: 15% from 24/7 availability
 
-## 🎬 Demo Scenarios
+## Demo Scenarios
 
 1. **Successful Booking**: Eligible carrier negotiates and books
 2. **Failed Verification**: Carrier fails FMCSA check
@@ -86,14 +86,14 @@ Based on typical freight broker operations:
 4. **Already Booked**: Handling duplicate attempts
 5. **Not Interested**: Carrier declines available loads
 
-## 📈 Next Steps
+## Next Steps
 
 1. **Integration**: Connect to your existing TMS
 2. **Customization**: Adjust negotiation parameters
 3. **Training**: Fine-tune voice agent responses
 4. **Expansion**: Add outbound calling capabilities
 
-## 📞 Contact
+## Contact
 
 For technical questions or to schedule a deeper dive:
 - **Solution Architect**: [Your Name]
