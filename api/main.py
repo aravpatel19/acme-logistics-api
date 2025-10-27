@@ -44,7 +44,9 @@ async def lifespan(app: FastAPI):
     app.state.http_client = httpx.AsyncClient(timeout=15.0)
     
     # Initialize services
-    app.state.loads = await LoadService.initialize()
+    # Use correct path when running from /app directory in Docker
+    data_path = "api/data/loads.json" if os.path.exists("api/data/loads.json") else "data/loads.json"
+    app.state.loads = await LoadService.initialize(data_path)
     app.state.metrics = MetricsService()
     
     logger.info(f"✅ Loaded {len(app.state.loads.loads)} freight loads")
