@@ -1,6 +1,7 @@
 // Dashboard configuration
-// Automatically use the same host as the dashboard is served from
-const API_BASE_URL = window.location.origin;
+// When accessed through ngrok or production, use relative URLs
+// This works because FastAPI serves both API and dashboard
+const API_BASE_URL = '';
 const REFRESH_INTERVAL = 10000; // 10 seconds - more responsive updates
 
 // Authentication with 1-hour expiration
@@ -60,6 +61,8 @@ let sentimentChart = null;
 // Initialize dashboard
 async function init() {
     console.log('Initializing dashboard...');
+    console.log('API_KEY:', API_KEY ? 'Set' : 'Not set');
+    console.log('API_BASE_URL:', API_BASE_URL);
     
     // Initial load
     await updateDashboard();
@@ -191,7 +194,11 @@ async function fetchMetrics() {
 async function fetchLoads() {
     try {
         // Fetch ALL loads including booked ones for dashboard
-        const response = await fetch(`${API_BASE_URL}/api/v1/loads?include_booked=true&t=${Date.now()}`, {
+        const url = `${API_BASE_URL}/api/v1/loads?include_booked=true&t=${Date.now()}`;
+        console.log('Fetching loads from:', url);
+        console.log('With API key:', API_KEY ? 'Yes' : 'No');
+        
+        const response = await fetch(url, {
             headers: { 'Authorization': `Bearer ${API_KEY}` }
         });
         

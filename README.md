@@ -66,18 +66,21 @@ docker run -p 8000:8000 -e ACME_API_KEY="your_key" acme-api
 ## Features
 
 ### API Endpoints
+
 - `GET /api/v1/carriers/find` - FMCSA verification
 - `GET /api/v1/loads` - Search available freight
 - `POST /api/v1/offers/log` - Track call outcomes
 - `GET /metrics` - Analytics data
 
 ### Dashboard
+
 - Real-time metrics
 - Call history
 - Success rate tracking
 - Sentiment analysis
 
 ### Security
+
 - HTTPS with Let's Encrypt
 - API key authentication
 - Rate limiting
@@ -99,7 +102,7 @@ docker run -p 8000:8000 -e ACME_API_KEY="your_key" acme-api
 
 ## HappyRobot Integration
 
-See [HAPPYROBOT_API_ENDPOINTS.md](./HAPPYROBOT_API_ENDPOINTS.md) for voice agent configuration.
+See the docs folder for detailed integration guides.
 
 ## Performance
 
@@ -120,10 +123,10 @@ python tests/populate_metrics.py
 
 ## Documentation
 
-- [Solution Overview](./ACME_LOGISTICS_SOLUTION.md) - Business presentation
-- [API Documentation](./API_DOCUMENTATION.md) - Technical details
-- [Deployment Guide](./DEPLOYMENT_GUIDE.md) - Infrastructure setup
-- [Security Details](./SECURITY.md) - Security implementation
+- [API Documentation](./docs/API_DOCUMENTATION.md) - Technical API reference
+- [Developer Guide](./docs/DEVELOPER_GUIDE.md) - Development setup and guidelines
+- [Deployment Guide](./docs/DEPLOYMENT_GUIDE.md) - Production deployment instructions
+- [Security Details](./docs/SECURITY.md) - Security implementation and best practices
 
 ## License
 
