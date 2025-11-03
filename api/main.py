@@ -48,13 +48,16 @@ async def lifespan(app: FastAPI):
     data_dir = "api/data" if os.path.exists("api") else "data"
     loads_path = os.path.join(data_dir, "loads.json")
     
-    # If loads.json doesn't exist but we have a backup, copy it
-    if not os.path.exists(loads_path):
-        init_path = os.path.join(data_dir + "_init", "loads.json")
-        if os.path.exists(init_path):
-            import shutil
-            logger.info(f"Initializing loads.json from {init_path}")
-            shutil.copy(init_path, loads_path)
+    # ALWAYS use fresh loads from the deployment (data_init)
+    # This ensures updates are applied on each deployment
+    init_path = os.path.join(data_dir + "_init", "loads.json")
+    if os.path.exists(init_path):
+        import shutil
+        logger.info(f"Updating loads.json from fresh deployment data at {init_path}")
+        shutil.copy(init_path, loads_path)
+    else:
+        # Fallback if no init data (shouldn't happen in production)
+        logger.warning("No init data found, using existing loads.json")
     
     app.state.loads = await LoadService.initialize(loads_path)
     
